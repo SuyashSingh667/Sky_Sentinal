@@ -1,0 +1,74 @@
+{
+  "satellites": [],
+  "debris": [],
+  "rockets": [
+    {
+      "id": "falcon9",
+      "name": "Falcon 9",
+      "manufacturer": "SpaceX",
+      "payload_capacity": {
+        "LEO": 22800,
+        "GTO": 8300
+      },
+      "target_orbit": "LEO",
+      "reusable": true,
+      "active": true,
+      "risk_assessment": "low",
+      "launch_sites": [
+        "Kennedy Space Center",
+        "Vandenberg SFB"
+      ]
+    },
+    {
+      "id": "atlas5",
+      "name": "Atlas V",
+      "manufacturer": "ULA",
+      "payload_capacity": {
+        "LEO": 18850,
+        "GTO": 8900
+      },
+      "target_orbit": "GTO",
+      "reusable": false,
+      "active": true,
+      "risk_assessment": "low",
+      "launch_sites": [
+        "Cape Canaveral"
+      ]
+    },
+    {
+      "id": "ariane5",
+      "name": "Ariane 5",
+      "manufacturer": "Arianespace",
+      "payload_capacity": {
+        "LEO": 21000,
+        "GTO": 10500
+      },
+      "target_orbit": "GTO",
+      "reusable": false,
+      "active": true,
+      "risk_assessment": "medium",
+      "launch_sites": [
+        "Kourou"
+      ]
+    }
+  ],
+  "alerts": [],
+  "stats": {
+    "total_objects": 0,
+    "active_satellites": 0,
+    "debris_count": 0,
+    "risk_distribution": {
+      "low": 0,
+      "medium": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "orbit_distribution": {
+      "LEO": 0,
+      "MEO": 0,
+      "GEO": 0,
+      "HEO": 0
+    }
+  },
+  "last_updated": "2026-07-05T03:40:50.658915"
+}

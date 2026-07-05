@@ -1,0 +1,8 @@
+ID,Title,Severity,Type,Status,Source,Timestamp,Probability,Time to Event (min)
+ALERT_014,Conjunction Warning,medium,collision,active,TLE,2026-03-17T08:05:12.269Z,0.8%,3120
+ALERT_011,Conjunction Warning,medium,collision,active,TLE,2026-03-17T01:05:12.269Z,0.9%,4320
+ALERT_012,Conjunction Warning,medium,collision,active,TLE,2026-03-16T20:05:12.269Z,0.3%,1860
+ALERT_010,Conjunction Warning,medium,collision,active,TLE,2026-03-16T20:05:12.269Z,0.5%,4140
+ALERT_013,Conjunction Warning,medium,collision,investigating,TLE,2026-03-16T10:05:12.269Z,0.9%,2220
+ALERT_002,Potential Collision Detected,high,collision,investigating,TLE,2026-03-15T12:05:12.269Z,2.3%,1440
+ALERT_001,Potential Collision Detected,critical,collision,active,TLE,2026-03-14T20:05:12.269Z,4.5%,480

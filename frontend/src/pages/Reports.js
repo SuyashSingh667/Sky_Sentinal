@@ -12,7 +12,6 @@ import {
   ArrowTrendingUpIcon,
   ArrowTrendingDownIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon,
   ClockIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline';

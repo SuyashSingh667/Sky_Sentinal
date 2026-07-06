@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   MagnifyingGlassIcon,
-  FunnelIcon,
-  ExclamationTriangleIcon,
-  ShieldExclamationIcon,
-  FireIcon,
-  ClockIcon,
-  SignalIcon,
-  MapPinIcon
+  FunnelIcon
 } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 
@@ -18,30 +11,16 @@ import ObjectList from '../components/Dashboard/ObjectList';
 import FilterPanel from '../components/Dashboard/FilterPanel';
 
 // Real API
-import { getStats, getAlerts } from '../services/api';
+import { getAlerts } from '../services/api';
 
-import { isroSatellites, ISRO_SATELLITE_STATS } from '../data/isroSatellites';
+import { isroSatellites } from '../data/isroSatellites';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh] = useState(true);
 
-  // Live conjunction metrics (unique data not in top nav)
-  const [conjunctionMetrics, setConjunctionMetrics] = useState({
-    critical: 0,
-    high: 0,
-    medium: 0,
-    closestApproach: null,
-    nextTCA: null,
-    totalAlerts: 0
-  });
-
-  // Orbit distribution
-  const [orbitDist, setOrbitDist] = useState({ LEO: 0, GEO: 0, MEO: 0, SSO: 0 });
 
   const [objects, setObjects] = useState(isroSatellites);
   const [filteredObjects, setFilteredObjects] = useState(isroSatellites);
@@ -114,44 +93,7 @@ const Dashboard = () => {
       setObjects(combined);
       setFilteredObjects(combined);
 
-      // Compute orbit distribution from satellite data
-      const dist = { LEO: 0, GEO: 0, MEO: 0, SSO: 0 };
-      isroSatellites.forEach(s => {
-        const o = s.orbit || 'LEO';
-        if (o === 'LEO') dist.LEO++;
-        else if (o === 'GEO' || o === 'GTO') dist.GEO++;
-        else if (o === 'MEO') dist.MEO++;
-        else if (o === 'SSO') dist.SSO++;
-        else dist.LEO++;
-      });
-      setOrbitDist(dist);
 
-      // Fetch live alerts for conjunction metrics
-      try {
-        const alertsRes = await getAlerts('all');
-        if (alertsRes.success && Array.isArray(alertsRes.data)) {
-          const alerts = alertsRes.data;
-          const critical = alerts.filter(a => a.severity === 'critical').length;
-          const high = alerts.filter(a => a.severity === 'high').length;
-          const medium = alerts.filter(a => a.severity === 'medium').length;
-          const minDist = alerts.length > 0 ? Math.min(...alerts.map(a => a.miss_distance || 999)) : null;
-          const nextApproach = alerts.length > 0 ? alerts.reduce((earliest, a) => {
-            const t = new Date(a.closest_approach_time);
-            return t < earliest ? t : earliest;
-          }, new Date('2099-01-01')) : null;
-
-          setConjunctionMetrics({
-            critical, high, medium,
-            closestApproach: minDist,
-            nextTCA: nextApproach,
-            totalAlerts: alerts.length
-          });
-        }
-      } catch (e) {
-        console.warn('Failed to fetch live alerts for metrics:', e);
-      }
-
-      setLastUpdate(new Date());
     } catch (error) {
       console.error('Error loading dashboard data:', error);
     } finally {
@@ -211,11 +153,6 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const handleRefresh = () => {
-    fetchDashboardData();
-    toast.success('Data refreshed successfully');
-  };
-
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
@@ -228,18 +165,6 @@ const Dashboard = () => {
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 0.5 } }
-  };
-
-  // Format time until TCA
-  const formatTCA = (date) => {
-    if (!date) return '—';
-    const now = new Date();
-    const diff = date - now;
-    if (diff < 0) return 'Passed';
-    const hrs = Math.floor(diff / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    if (hrs > 24) return `${Math.floor(hrs / 24)}d ${hrs % 24}h`;
-    return `${hrs}h ${mins}m`;
   };
 
   return (

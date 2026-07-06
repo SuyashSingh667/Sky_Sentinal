@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -11,12 +11,9 @@ import {
   PaintBrushIcon,
   ComputerDesktopIcon,
   DevicePhoneMobileIcon,
-  EyeIcon,
-  EyeSlashIcon,
   KeyIcon,
   TrashIcon,
   ArrowRightOnRectangleIcon,
-  CheckCircleIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon
 } from '@heroicons/react/24/outline';

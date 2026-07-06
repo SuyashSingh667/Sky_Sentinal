@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PlayIcon, PauseIcon, StopIcon, ForwardIcon, BackwardIcon,
-  CogIcon, DocumentArrowDownIcon, ChartBarIcon, GlobeAltIcon,
-  RocketLaunchIcon, ClockIcon, AdjustmentsHorizontalIcon, EyeIcon,
+  CogIcon, ChartBarIcon, GlobeAltIcon,
+  RocketLaunchIcon, EyeIcon,
   ArrowPathIcon, PlusIcon, TrashIcon, PencilIcon
 } from '@heroicons/react/24/outline';
 

@@ -7,9 +7,6 @@ import {
   FunnelIcon,
   ArrowDownTrayIcon,
   EyeIcon,
-  SignalIcon,
-  BoltIcon,
-  ChartBarIcon,
   ClockIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
@@ -189,15 +186,6 @@ const Satellites = ({ isWidget = false }) => {
       case 'operational': return <CheckCircleIcon className="w-4 h-4 text-green-400" />;
       case 'non-operational': return <ExclamationTriangleIcon className="w-4 h-4 text-red-400" />;
       default: return <ClockIcon className="w-4 h-4 text-gray-400" />;
-    }
-  };
-
-  const getPowerStatusColor = (ps) => {
-    switch (ps) {
-      case 'nominal': return 'text-green-400';
-      case 'degraded': return 'text-yellow-400';
-      case 'critical': return 'text-red-400';
-      default: return 'text-gray-400';
     }
   };
 

@@ -22,7 +22,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 
-import { getStats, getDebris, getAlerts } from '../services/api';
+import { getStats } from '../services/api';
 
 const Reports = () => {
   const [selectedReport, setSelectedReport] = useState('overview');
@@ -72,41 +72,41 @@ const Reports = () => {
 
   // Load chart data when report type / date range changes
   useEffect(() => {
+    const loadReportData = async () => {
+      setIsLoading(true);
+      try {
+        const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : dateRange === '90d' ? 90 : 365;
+        const baseData = Array.from({ length: Math.min(days, 30) }, (_, i) => {
+          const date = new Date();
+          date.setDate(date.getDate() - (Math.min(days, 30) - 1 - i));
+          return {
+            date: date.toISOString().split('T')[0],
+            day: date.toLocaleDateString('en-US', { weekday: 'short' }),
+          };
+        });
+
+        setDebrisData(baseData.map(d => ({
+          ...d,
+          tracked: Math.floor(Math.random() * 200) + 14700,
+          newDetections: Math.floor(Math.random() * 30) + 5,
+          deorbited: Math.floor(Math.random() * 10) + 1,
+        })));
+
+        setCollisionData(baseData.map(d => ({
+          ...d,
+          probability: Math.random() * 0.05,
+          conjunctions: Math.floor(Math.random() * 15) + 2,
+        })));
+
+      } catch (e) {
+        console.error('Failed to load report data:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     loadReportData();
   }, [selectedReport, dateRange]);
-
-  const loadReportData = async () => {
-    setIsLoading(true);
-    try {
-      const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : dateRange === '90d' ? 90 : 365;
-      const baseData = Array.from({ length: Math.min(days, 30) }, (_, i) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (Math.min(days, 30) - 1 - i));
-        return {
-          date: date.toISOString().split('T')[0],
-          day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-        };
-      });
-
-      setDebrisData(baseData.map(d => ({
-        ...d,
-        tracked: Math.floor(Math.random() * 200) + 14700,
-        newDetections: Math.floor(Math.random() * 30) + 5,
-        deorbited: Math.floor(Math.random() * 10) + 1,
-      })));
-
-      setCollisionData(baseData.map(d => ({
-        ...d,
-        probability: Math.random() * 0.05,
-        conjunctions: Math.floor(Math.random() * 15) + 2,
-      })));
-
-    } catch (e) {
-      console.error('Failed to load report data:', e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const reportTypes = [
     { id: 'overview', name: 'Overview', icon: ChartBarIcon },

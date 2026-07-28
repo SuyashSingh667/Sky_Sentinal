@@ -200,55 +200,55 @@ const Alerts = () => {
   // ── Style helpers ──────────────────────────────────────────────────────────
   const SEVERITY_STYLES = {
     critical: {
-      border: 'border-l-red-500',
-      badge: 'bg-red-500/15 text-red-400 border border-red-500/30',
-      glow: 'shadow-[0_0_20px_rgba(239,68,68,0.15)]',
+      border: 'border-l-red-500/80',
+      badge: 'bg-red-950/40 text-red-400 border border-red-800/40',
+      glow: '',
       dot: 'bg-red-500',
-      bar: 'bg-red-500',
+      bar: 'bg-red-500/80',
       icon: <FireIcon className="w-4 h-4" />,
       label: 'CRITICAL',
     },
     high: {
-      border: 'border-l-orange-500',
-      badge: 'bg-orange-500/15 text-orange-400 border border-orange-500/30',
-      glow: 'shadow-[0_0_14px_rgba(249,115,22,0.1)]',
-      dot: 'bg-orange-500',
-      bar: 'bg-orange-500',
+      border: 'border-l-amber-500/80',
+      badge: 'bg-amber-950/40 text-amber-400 border border-amber-800/40',
+      glow: '',
+      dot: 'bg-amber-500',
+      bar: 'bg-amber-500/80',
       icon: <ExclamationTriangleIcon className="w-4 h-4" />,
       label: 'HIGH',
     },
     medium: {
-      border: 'border-l-yellow-500',
-      badge: 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30',
+      border: 'border-l-yellow-500/80',
+      badge: 'bg-yellow-950/40 text-yellow-400 border border-yellow-800/40',
       glow: '',
       dot: 'bg-yellow-500',
-      bar: 'bg-yellow-500',
+      bar: 'bg-yellow-500/80',
       icon: <ShieldExclamationIcon className="w-4 h-4" />,
       label: 'MEDIUM',
     },
     low: {
-      border: 'border-l-blue-500',
-      badge: 'bg-blue-500/15 text-blue-400 border border-blue-500/30',
+      border: 'border-l-blue-500/80',
+      badge: 'bg-blue-950/40 text-blue-400 border border-blue-800/40',
       glow: '',
       dot: 'bg-blue-500',
-      bar: 'bg-blue-500',
+      bar: 'bg-blue-500/80',
       icon: <InformationCircleIcon className="w-4 h-4" />,
       label: 'LOW',
     },
   };
 
   const STATUS_STYLES = {
-    active: 'bg-red-500/20 text-red-300 border border-red-500/40',
-    investigating: 'bg-blue-500/20 text-blue-300 border border-blue-500/40',
-    acknowledged: 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40',
-    resolved: 'bg-green-500/20 text-green-300 border border-green-500/40',
+    active: 'bg-red-950/30 text-red-400 border border-red-900/40',
+    investigating: 'bg-blue-950/30 text-blue-400 border border-blue-900/40',
+    acknowledged: 'bg-amber-950/30 text-amber-400 border border-amber-900/40',
+    resolved: 'bg-emerald-950/30 text-emerald-400 border border-emerald-900/40',
   };
 
   const STATUS_ICONS = {
-    active: <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse mr-1.5" />,
-    investigating: <EyeIcon className="w-3 h-3 mr-1" />,
-    acknowledged: <ClockIcon className="w-3 h-3 mr-1" />,
-    resolved: <CheckCircleIcon className="w-3 h-3 mr-1" />,
+    active: <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5" />,
+    investigating: <EyeIcon className="w-3 h-3 mr-1 text-blue-400" />,
+    acknowledged: <ClockIcon className="w-3 h-3 mr-1 text-amber-400" />,
+    resolved: <CheckCircleIcon className="w-3 h-3 mr-1 text-emerald-400" />,
   };
 
   const sev = (s) => SEVERITY_STYLES[s] || SEVERITY_STYLES.low;
@@ -300,19 +300,16 @@ const Alerts = () => {
       {/* ── Top Stats Bar ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Active', value: stats.active, color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20', pulse: true },
-          { label: 'Critical', value: stats.critical, color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20' },
-          { label: 'High Risk', value: stats.high, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
-          { label: 'Investigating', value: stats.investigating, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
-          { label: 'Resolved', value: stats.resolved, color: 'text-green-400', bg: 'bg-green-500/10 border-green-500/20' },
-          { label: 'Total Alerts', value: stats.total, color: 'text-gray-300', bg: 'bg-white/5 border-white/10' },
-        ].map(({ label, value, color, bg, pulse }) => (
+          { label: 'Active', value: stats.active, color: 'text-red-400', bg: 'bg-[#180d0d]/70 border-red-900/30' },
+          { label: 'Critical', value: stats.critical, color: 'text-red-400', bg: 'bg-[#180d0d]/70 border-red-900/30' },
+          { label: 'High Risk', value: stats.high, color: 'text-amber-400', bg: 'bg-[#18130a]/70 border-amber-900/30' },
+          { label: 'Investigating', value: stats.investigating, color: 'text-blue-400', bg: 'bg-[#0c141d]/70 border-blue-900/30' },
+          { label: 'Resolved', value: stats.resolved, color: 'text-emerald-400', bg: 'bg-[#0c1813]/70 border-emerald-900/30' },
+          { label: 'Total Alerts', value: stats.total, color: 'text-gray-300', bg: 'bg-[#0d0d0d] border-[#1e1e1e]' },
+        ].map(({ label, value, color, bg }) => (
           <div key={label} className={`border rounded-xl px-4 py-3 flex flex-col gap-1 ${bg}`}>
             <span className="text-xs text-gray-500 uppercase tracking-wider font-medium">{label}</span>
-            <div className="flex items-center gap-1.5">
-              {pulse && value > 0 && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse flex-shrink-0" />}
-              <span className={`text-2xl font-bold ${color}`}>{value}</span>
-            </div>
+            <span className={`text-2xl font-bold ${color}`}>{value}</span>
           </div>
         ))}
       </div>
@@ -359,7 +356,7 @@ const Alerts = () => {
           onClick={() => setRealTimeEnabled(r => !r)}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm transition-all ${
             realTimeEnabled
-              ? 'bg-green-500/15 border-green-500/40 text-green-300'
+              ? 'bg-emerald-950/30 border-emerald-900/40 text-emerald-400'
               : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
           }`}
         >
@@ -475,8 +472,8 @@ const Alerts = () => {
             {filteredAlerts.length} alert{filteredAlerts.length !== 1 ? 's' : ''} — sorted by priority
           </span>
           {stats.active > 0 && (
-            <span className="flex items-center gap-1 text-xs text-red-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            <span className="flex items-center gap-1 text-xs text-red-400 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
               {stats.active} active
             </span>
           )}
@@ -515,19 +512,11 @@ const Alerts = () => {
                   exit={{ opacity: 0, scale: 0.97 }}
                   transition={{ duration: 0.25, delay: Math.min(index * 0.04, 0.3) }}
                   onClick={() => setSelectedAlert(alert)}
-                  className={`
-                    relative bg-[#0d0d0d] border border-[#1e1e1e] border-l-4 ${st.border} rounded-xl p-4 cursor-pointer
-                    hover:bg-[#111] hover:border-[#2a2a2a] transition-all duration-200 group
-                    ${st.glow}
-                    ${isActive ? 'ring-1 ring-red-500/20' : ''}
-                  `}
+                  className={`relative bg-[#0d0d0d] border border-[#1e1e1e] border-l-4 ${st.border} rounded-xl p-4 cursor-pointer hover:bg-[#121212] hover:border-[#2a2a2a] transition-all duration-200 group`}
                 >
-                  {/* Active pulse ring */}
+                  {/* Active indicator dot */}
                   {isActive && (
-                    <span className="absolute top-3 right-3 flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
-                    </span>
+                    <span className="absolute top-3.5 right-3.5 w-2 h-2 rounded-full bg-red-500" />
                   )}
 
                   <div className="flex items-start gap-4 pr-6">
@@ -553,31 +542,31 @@ const Alerts = () => {
                       <div className="flex items-center gap-1.5 mb-2">
                         <span className="text-xs font-medium text-blue-400 truncate max-w-[140px]">{alert.object1?.name}</span>
                         <ChevronRightIcon className="w-3 h-3 text-gray-600 flex-shrink-0" />
-                        <span className="text-xs text-orange-400 truncate max-w-[140px]">{alert.object2?.name}</span>
+                        <span className="text-xs text-amber-400 truncate max-w-[140px]">{alert.object2?.name}</span>
                       </div>
 
                       {/* Row 3: Key metrics */}
                       <div className="flex flex-wrap gap-4 text-xs mb-3">
                         <div>
-                          <span className="text-gray-600">Prob.</span>
-                          <span className={`ml-1 font-mono font-semibold ${alert.probability > 0.1 ? 'text-red-400' : alert.probability > 0.01 ? 'text-orange-400' : 'text-gray-300'}`}>
+                          <span className="text-gray-500">Prob.</span>
+                          <span className={`ml-1 font-mono font-semibold ${alert.probability > 0.1 ? 'text-red-400' : alert.probability > 0.01 ? 'text-amber-400' : 'text-gray-300'}`}>
                             {alert.probability.toFixed(4)}%
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-600">Miss Dist.</span>
-                          <span className={`ml-1 font-mono font-semibold ${alert.miss_distance < 0.5 ? 'text-red-400' : alert.miss_distance < 2 ? 'text-orange-400' : 'text-gray-300'}`}>
+                          <span className="text-gray-500">Miss Dist.</span>
+                          <span className={`ml-1 font-mono font-semibold ${alert.miss_distance < 0.5 ? 'text-red-400' : alert.miss_distance < 2 ? 'text-amber-400' : 'text-gray-300'}`}>
                             {alert.miss_distance?.toFixed(2)} km
                           </span>
                         </div>
                         <div>
-                          <span className="text-gray-600">Alt.</span>
+                          <span className="text-gray-500">Alt.</span>
                           <span className="ml-1 font-mono text-gray-300">{alert.altitude?.toFixed(0)} km</span>
                         </div>
                         {alert.timeToEvent > 0 && (
                           <div>
-                            <span className="text-gray-600">TCA in</span>
-                            <span className={`ml-1 font-mono font-semibold ${alert.timeToEvent < 60 ? 'text-red-400 animate-pulse' : alert.timeToEvent < 360 ? 'text-orange-400' : 'text-gray-300'}`}>
+                            <span className="text-gray-500">TCA in</span>
+                            <span className={`ml-1 font-mono font-semibold ${alert.timeToEvent < 60 ? 'text-red-400' : alert.timeToEvent < 360 ? 'text-amber-400' : 'text-gray-300'}`}>
                               {alert.timeToEvent < 60
                                 ? `${alert.timeToEvent.toFixed(0)}m`
                                 : `${(alert.timeToEvent / 60).toFixed(1)}h`}
@@ -585,7 +574,7 @@ const Alerts = () => {
                           </div>
                         )}
                         <div className="ml-auto">
-                          <span className="text-gray-700">{alert.timestamp.toLocaleString()}</span>
+                          <span className="text-gray-600">{alert.timestamp.toLocaleString()}</span>
                         </div>
                       </div>
 
@@ -607,13 +596,13 @@ const Alerts = () => {
                     <div className="flex gap-2 mt-3 pt-3 border-t border-[#1a1a1a]">
                       <button
                         onClick={(e) => { e.stopPropagation(); acknowledgeAlert(alert.id); }}
-                        className="flex-1 py-1.5 text-xs font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 rounded-lg hover:bg-yellow-500/20 transition-colors"
+                        className="flex-1 py-1.5 text-xs font-medium bg-amber-950/30 text-amber-400 border border-amber-900/40 rounded-lg hover:bg-amber-900/30 transition-colors"
                       >
                         Acknowledge
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); resolveAlert(alert.id); }}
-                        className="flex-1 py-1.5 text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/30 rounded-lg hover:bg-green-500/20 transition-colors"
+                        className="flex-1 py-1.5 text-xs font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-lg hover:bg-emerald-900/30 transition-colors"
                       >
                         Mark Resolved
                       </button>
@@ -684,13 +673,13 @@ const Alerts = () => {
                 {/* Objects */}
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: 'Primary Object', obj: selectedAlert.object1, color: 'text-blue-400', border: 'border-blue-500/20' },
-                    { label: 'Secondary Object', obj: selectedAlert.object2, color: 'text-orange-400', border: 'border-orange-500/20' },
+                    { label: 'Primary Object', obj: selectedAlert.object1, color: 'text-blue-400', border: 'border-blue-900/30' },
+                    { label: 'Secondary Object', obj: selectedAlert.object2, color: 'text-amber-400', border: 'border-amber-900/30' },
                   ].map(({ label, obj, color, border }) => (
                     <div key={label} className={`bg-[#111] border ${border} rounded-xl p-3`}>
-                      <p className="text-xs text-gray-600 mb-1">{label}</p>
+                      <p className="text-xs text-gray-500 mb-1">{label}</p>
                       <p className={`text-sm font-semibold ${color}`}>{obj?.name}</p>
-                      <p className="text-xs text-gray-500">{obj?.type}</p>
+                      <p className="text-xs text-gray-400">{obj?.type}</p>
                     </div>
                   ))}
                 </div>
@@ -704,7 +693,7 @@ const Alerts = () => {
                     { label: 'Rel. Velocity', value: `${selectedAlert.relative_velocity?.toFixed(1)} km/s` },
                   ].map(({ label, value, warn }) => (
                     <div key={label} className="bg-[#111] border border-[#1e1e1e] rounded-xl p-3 text-center">
-                      <p className="text-[10px] text-gray-600 uppercase tracking-wider mb-1">{label}</p>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-1">{label}</p>
                       <p className={`text-base font-bold font-mono ${warn ? 'text-red-400' : 'text-white'}`}>{value}</p>
                     </div>
                   ))}
@@ -716,7 +705,7 @@ const Alerts = () => {
                     <ClockIcon className="w-8 h-8 text-gray-600 flex-shrink-0" />
                     <div>
                       <p className="text-xs text-gray-600 mb-0.5">Time to Closest Approach (TCA)</p>
-                      <p className={`text-xl font-bold font-mono ${selectedAlert.timeToEvent < 60 ? 'text-red-400' : selectedAlert.timeToEvent < 360 ? 'text-orange-400' : 'text-white'}`}>
+                      <p className={`text-xl font-bold font-mono ${selectedAlert.timeToEvent < 60 ? 'text-red-400' : selectedAlert.timeToEvent < 360 ? 'text-amber-400' : 'text-white'}`}>
                         {selectedAlert.timeToEvent < 60
                           ? `${selectedAlert.timeToEvent.toFixed(0)} minutes`
                           : `${(selectedAlert.timeToEvent / 60).toFixed(1)} hours`}
@@ -735,7 +724,7 @@ const Alerts = () => {
                   <div className="space-y-2">
                     {selectedAlert.recommendations.map((rec, i) => (
                       <div key={i} className="flex items-start gap-2.5 bg-[#111] border border-[#1e1e1e] rounded-lg px-3 py-2.5">
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold flex items-center justify-center mt-0.5">
+                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-950/40 text-blue-400 text-[10px] font-bold flex items-center justify-center mt-0.5 border border-blue-900/30">
                           {i + 1}
                         </span>
                         <p className="text-sm text-gray-300">{rec}</p>
@@ -750,13 +739,13 @@ const Alerts = () => {
                     <>
                       <button
                         onClick={() => acknowledgeAlert(selectedAlert.id)}
-                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 rounded-xl hover:bg-yellow-500/20 transition-colors"
+                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-amber-950/30 text-amber-400 border border-amber-900/40 rounded-xl hover:bg-amber-900/30 transition-colors"
                       >
                         Acknowledge
                       </button>
                       <button
                         onClick={() => resolveAlert(selectedAlert.id)}
-                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-green-500/10 text-green-400 border border-green-500/30 rounded-xl hover:bg-green-500/20 transition-colors"
+                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-xl hover:bg-emerald-900/30 transition-colors"
                       >
                         Mark Resolved
                       </button>
@@ -765,7 +754,7 @@ const Alerts = () => {
                   {selectedAlert.status === 'acknowledged' && (
                     <button
                       onClick={() => resolveAlert(selectedAlert.id)}
-                      className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-green-500/10 text-green-400 border border-green-500/30 rounded-xl hover:bg-green-500/20 transition-colors"
+                      className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-xl hover:bg-emerald-900/30 transition-colors"
                     >
                       Mark Resolved
                     </button>

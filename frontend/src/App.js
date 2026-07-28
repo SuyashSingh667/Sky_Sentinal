@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
@@ -7,27 +7,27 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
-// Components
+// Components (always needed — not lazy)
 import Navbar from './components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
-// Auth Components
+// Auth Components (small — keep eager)
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 
-// Pages
-import CombinedDashboard from './pages/CombinedDashboard';
-import Dashboard from './pages/Dashboard';
-import Visualization3D from './pages/Visualization3D';
-import Rockets from './pages/Rockets';
-import Satellites from './pages/Satellites';
-import Alerts from './pages/Alerts';
-import Simulation from './pages/Simulation';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import SpaceWeather from './pages/SpaceWeather';
-import Architecture from './pages/Architecture';
+// Pages — lazy loaded for code splitting (heavy bundles only load when navigated to)
+const CombinedDashboard = lazy(() => import('./pages/CombinedDashboard'));
+const Dashboard         = lazy(() => import('./pages/Dashboard'));
+const Visualization3D   = lazy(() => import('./pages/Visualization3D'));
+const Rockets           = lazy(() => import('./pages/Rockets'));
+const Satellites        = lazy(() => import('./pages/Satellites'));
+const Alerts            = lazy(() => import('./pages/Alerts'));
+const Simulation        = lazy(() => import('./pages/Simulation'));
+const Reports           = lazy(() => import('./pages/Reports'));
+const Settings          = lazy(() => import('./pages/Settings'));
+const SpaceWeather      = lazy(() => import('./pages/SpaceWeather'));
+const Architecture      = lazy(() => import('./pages/Architecture'));
 
 // Main App Layout Component
 const AppLayout = () => {
@@ -75,20 +75,26 @@ const AppLayout = () => {
               transition={pageTransition}
               className="h-full bg-black"
             >
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<CombinedDashboard />} />
-                <Route path="/3d-visualization" element={<Visualization3D />} />
-                <Route path="/rockets" element={<Rockets />} />
-                <Route path="/satellites" element={<Satellites />} />
-                <Route path="/alerts" element={<Alerts />} />
-                <Route path="/simulation" element={<Simulation />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/space-weather" element={<SpaceWeather />} />
-                <Route path="/architecture" element={<Architecture />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </Routes>
+              <Suspense fallback={
+                <div className="flex items-center justify-center h-full bg-black">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b border-gray-400" />
+                </div>
+              }>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<CombinedDashboard />} />
+                  <Route path="/3d-visualization" element={<Visualization3D />} />
+                  <Route path="/rockets" element={<Rockets />} />
+                  <Route path="/satellites" element={<Satellites />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/simulation" element={<Simulation />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/space-weather" element={<SpaceWeather />} />
+                  <Route path="/architecture" element={<Architecture />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </Routes>
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </main>

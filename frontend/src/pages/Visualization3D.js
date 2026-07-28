@@ -66,11 +66,14 @@ const Visualization3D = () => {
   const [layers, setLayers] = useState({ satellites: true, orbits: true, debris: true });
   const [objects, setObjects] = useState([]);
   const [stats, setStats] = useState({ totalObjects: 0, satellites: 0, debris: 0, highRisk: 0 });
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const utcClockRef = useRef(null); // direct DOM ref — avoids re-render every second
 
-  // Live UTC clock
+  // Live UTC clock — writes directly to DOM, no React state update
   useEffect(() => {
-    const t = setInterval(() => setCurrentTime(new Date()), 1000);
+    const t = setInterval(() => {
+      if (utcClockRef.current)
+        utcClockRef.current.textContent = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
+    }, 1000);
     return () => clearInterval(t);
   }, []);
 
@@ -88,7 +91,7 @@ const Visualization3D = () => {
     }));
 
     const debris = [];
-    for (let i = 0; i < 350; i++) {
+    for (let i = 0; i < 150; i++) { // reduced from 350 for performance
       const rand = Math.random();
       let baseAlt, baseInc, isLEO = true;
       if (rand < 0.6) { baseAlt = 500 + Math.random() * 300; baseInc = 97.5 + (Math.random() - 0.5) * 5; }
@@ -122,8 +125,6 @@ const Visualization3D = () => {
   const toggleLayer = (key) => setLayers(prev => ({ ...prev, [key]: !prev[key] }));
   const filteredSatellites = useMemo(() => objects.filter(o => o.type === 'satellite' && layers.satellites), [objects, layers.satellites]);
   const filteredDebris = useMemo(() => objects.filter(o => o.type === 'debris' && layers.debris), [objects, layers.debris]);
-
-  const utcString = currentTime.toISOString().slice(0, 19).replace('T', ' ');
 
   return (
     <div
@@ -181,7 +182,7 @@ const Visualization3D = () => {
         {/* UTC clock + LIVE badge */}
         <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
           <div className="hidden md:block text-right">
-            <p className="text-xs font-mono" style={{ color: P.neonBlue }}>{utcString} UTC</p>
+            <p ref={utcClockRef} className="text-xs font-mono" style={{ color: P.neonBlue }}>{new Date().toISOString().slice(0, 19).replace('T', ' ')} UTC</p>
             <p className="text-[10px]" style={{ color: P.neonGreen }}>Indian Space Research Organisation</p>
           </div>
           <div

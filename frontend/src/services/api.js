@@ -1,17 +1,27 @@
-const BASE_URL = 'http://localhost:5001/api';
+const BASE_URL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:5001/api' : '/api');
+const API_TIMEOUT_MS = 8000; // 8 seconds — gracefully falls back to static data
 
-// Helper function for all API calls
+// Helper function for all API calls with timeout support
 const apiFetch = async (endpoint, options = {}) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
             ...options,
         });
+        clearTimeout(timeoutId);
         const data = await response.json();
         if (!data.success) throw new Error(data.message || 'API error');
         return data.data;
     } catch (error) {
-        console.error(`API call failed for ${endpoint}:`, error);
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            console.warn(`API timeout for ${endpoint} after ${API_TIMEOUT_MS}ms`);
+        } else {
+            console.error(`API call failed for ${endpoint}:`, error);
+        }
         throw error;
     }
 };

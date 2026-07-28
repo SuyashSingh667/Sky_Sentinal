@@ -733,9 +733,8 @@ const SpaceWeather = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h5 className="text-sm font-bold text-white leading-tight">{sat.name}</h5>
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">{sat.orbit} • {sat.mission.substring(0, 30)}...</span>
-                  </div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider ${
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">{sat.orbit} • {(sat.mission || 'Unknown mission').substring(0, 30)}...</span>                  </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider ${
                     isCritical ? 'bg-neon-purple/20 text-neon-purple border border-neon-purple/30' : 'bg-neon-blue/20 text-neon-blue border border-neon-blue/30'
                   }`}>
                     Health: {sat.healthScore}%

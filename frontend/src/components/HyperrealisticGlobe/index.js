@@ -58,7 +58,7 @@ const HyperrealisticGlobe = ({
 
   // ─── STARFIELD ───────────────────────────────────────────────────────────────
   const buildStarfield = useCallback((scene) => {
-    const COUNT = 80000;
+    const COUNT = 20000; // reduced from 80k for performance
     const positions = new Float32Array(COUNT * 3);
     const colors    = new Float32Array(COUNT * 3);
     const sizes     = new Float32Array(COUNT);
@@ -208,7 +208,7 @@ const HyperrealisticGlobe = ({
       `
     });
 
-    const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 128, 128), mat);
+    const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 64), mat); // reduced from 128×128
     earthRef.current = earth;
     scene.add(earth);
 
@@ -218,7 +218,7 @@ const HyperrealisticGlobe = ({
     const cloudMat = new THREE.MeshLambertMaterial({
       map: cloudTex, transparent: true, opacity: 0.6, depthWrite: false
     });
-    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.007, 64, 64), cloudMat);
+    const clouds = new THREE.Mesh(new THREE.SphereGeometry(1.007, 48, 48), cloudMat); // reduced from 64×64
     cloudsRef.current = clouds;
     scene.add(clouds);
 
@@ -241,7 +241,7 @@ const HyperrealisticGlobe = ({
       blending: THREE.AdditiveBlending, side: THREE.BackSide,
       transparent: true, depthWrite: false
     });
-    scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.022, 64, 64), atmMat));
+    scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.022, 32, 32), atmMat)); // reduced from 64×64
 
     // Outer Fresnel glow (FrontSide)
     const glowMat = new THREE.ShaderMaterial({
@@ -264,7 +264,7 @@ const HyperrealisticGlobe = ({
       blending: THREE.AdditiveBlending, side: THREE.FrontSide,
       transparent: true, depthWrite: false
     });
-    scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.032, 64, 64), glowMat));
+    scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.032, 32, 32), glowMat)); // reduced from 64×64
   }, []);
 
   // ─── SATELLITES ──────────────────────────────────────────────────────────────
@@ -510,7 +510,7 @@ const HyperrealisticGlobe = ({
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
     renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // capped at 1.5 for perf (was 2)
     renderer.toneMapping        = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.0;
     renderer.outputColorSpace   = THREE.SRGBColorSpace;
@@ -598,35 +598,40 @@ const HyperrealisticGlobe = ({
   }, [buildStarfield, buildEarth]);
 
   // ─── ANIMATION LOOP ──────────────────────────────────────────────────────────
+  const frameCountRef = useRef(0);
+
   const animate = useCallback(() => {
     if (!sceneRef.current || !rendererRef.current || !cameraRef.current) return;
     animIdRef.current = requestAnimationFrame(animate);
 
+    frameCountRef.current++;
     const t = Date.now() * 0.001;
+    const isEvenFrame = frameCountRef.current % 2 === 0;
 
     if (isPlaying) {
       if (earthRef.current)  earthRef.current.rotation.y  += 0.00005;
       if (cloudsRef.current) cloudsRef.current.rotation.y += 0.000075;
-      if (starsRef.current && starsRef.current.material.uniforms)
+      // Only update star shader every 2nd frame (twinkling is slow anyway)
+      if (isEvenFrame && starsRef.current && starsRef.current.material.uniforms)
         starsRef.current.material.uniforms.uTime.value = t;
 
-      // Animate satellites
+      // Animate satellites every frame (few objects)
       if (satellitesGroupRef.current) {
-        satellitesGroupRef.current.children.forEach((g, idx) => {
+        satellitesGroupRef.current.children.forEach((g) => {
           if (!g.userData.meanMotion) return;
           g.userData.ma += g.userData.meanMotion * 0.016 * 8;
           const p = orbitalPos(g.userData.alt, g.userData.inc, g.userData.raan, g.userData.aop, g.userData.ma * 180/Math.PI);
           g.position.copy(p);
-          g.lookAt(0, 0, 0); // Keep instruments facing Earth
-          g.rotation.z += 0.004; // slow thermal spin
+          g.lookAt(0, 0, 0);
+          g.rotation.z += 0.004;
         });
       }
 
-      // Animate debris (real polar/equatorial orbits)
-      if (debrisGroupRef.current) {
+      // Animate debris only every 2nd frame — positions change slowly
+      if (isEvenFrame && debrisGroupRef.current) {
         debrisGroupRef.current.children.forEach((d) => {
           if (!d.userData.meanMotion) return;
-          d.userData.ma += d.userData.meanMotion * 0.016 * 12;
+          d.userData.ma += d.userData.meanMotion * 0.032 * 12; // compensate for 2x delta
           const p = orbitalPos(d.userData.alt, d.userData.inc, d.userData.raan, d.userData.aop, d.userData.ma * 180/Math.PI);
           d.position.copy(p);
         });

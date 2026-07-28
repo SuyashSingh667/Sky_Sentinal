@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import CesiumGlobe from './CesiumGlobe';
@@ -79,7 +79,7 @@ const Globe3D = ({
     return { sampleSatellites, sampleDebris };
   };
 
-  const { sampleSatellites, sampleDebris } = generateSampleData();
+  const { sampleSatellites, sampleDebris } = useMemo(() => generateSampleData(), []); // memoized — only runs once
   const displaySatellites = satellites.length > 0 ? satellites : sampleSatellites;
   const displayDebris = debris.length > 0 ? debris : sampleDebris;
 

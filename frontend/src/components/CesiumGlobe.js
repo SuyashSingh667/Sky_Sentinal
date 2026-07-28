@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Viewer, Entity, PolylineGraphics } from 'resium';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { Viewer, Entity } from 'resium';
 import * as Cesium from 'cesium';
 import * as satellite from 'satellite.js';
 import { Cartesian3, Color } from 'cesium';
@@ -9,42 +9,47 @@ import "cesium/Build/Cesium/Widgets/widgets.css";
 
 const CesiumGlobe = ({ satellites = [], debris = [], onObjectSelect }) => {
     const [positions, setPositions] = useState({});
+    const rafRef = useRef(null);
+    const lastUpdateRef = useRef(0);
 
     // Memoize orbits generation to avoid recalculating on every frame unless objects change
     const objects = useMemo(() => [...satellites, ...debris], [satellites, debris]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            const now = new Date();
+        // Throttle position updates to ~10 FPS instead of 60 FPS
+        // Satellite positions change slowly — 10 FPS is visually indistinguishable
+        const UPDATE_INTERVAL_MS = 100; // 10 FPS
+
+        const tick = () => {
+            rafRef.current = requestAnimationFrame(tick);
+            const now = Date.now();
+            if (now - lastUpdateRef.current < UPDATE_INTERVAL_MS) return;
+            lastUpdateRef.current = now;
+
+            const nowDate = new Date(now);
             const newPositions = {};
 
             objects.forEach((obj) => {
-                // Mock TLE for now if not provided (in a real app, you'd fetch real TLEs)
-                // This is a placeholder to demonstrate satellite.js integration.
-                // If your object has a tle parameter, use it:
                 if (obj.tleLine1 && obj.tleLine2) {
                     const satrec = satellite.twoline2satrec(obj.tleLine1, obj.tleLine2);
-                    const positionAndVelocity = satellite.propagate(satrec, now);
+                    const positionAndVelocity = satellite.propagate(satrec, nowDate);
                     const positionEci = positionAndVelocity.position;
 
                     if (positionEci) {
-                        const gmst = satellite.gstime(now);
+                        const gmst = satellite.gstime(nowDate);
                         const positionGd = satellite.eciToGeodetic(positionEci, gmst);
 
-                        // Convert to Cesium Cartesian3
                         const position = Cartesian3.fromRadians(
                             positionGd.longitude,
                             positionGd.latitude,
-                            positionGd.height * 1000 // height in meters
+                            positionGd.height * 1000
                         );
                         newPositions[obj.id] = position;
                     }
                 } else {
-                    // Fallback for objects without TLE (using lat/lon/alt from state)
-                    // Using manual movement for demo purposes if no TLE
-                    const time = now.getTime() / 1000;
+                    const time = now / 1000;
                     const position = Cartesian3.fromDegrees(
-                        obj.longitude + (obj.velocity || 0) * (time % 3600) / 3600, // rudimentary movement
+                        obj.longitude + (obj.velocity || 0) * (time % 3600) / 3600,
                         obj.latitude,
                         (obj.altitude || 400) * 1000
                     );
@@ -53,9 +58,13 @@ const CesiumGlobe = ({ satellites = [], debris = [], onObjectSelect }) => {
             });
 
             setPositions(newPositions);
-        }, 1000 / 60); // 60 FPS update
+        };
 
-        return () => clearInterval(interval);
+        rafRef.current = requestAnimationFrame(tick);
+
+        return () => {
+            if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        };
     }, [objects]);
 
     return (

@@ -200,55 +200,55 @@ const Alerts = () => {
   // ── Style helpers ──────────────────────────────────────────────────────────
   const SEVERITY_STYLES = {
     critical: {
-      border: 'border-l-red-500/80',
-      badge: 'bg-red-950/40 text-red-400 border border-red-800/40',
+      border: 'border-l-gray-400/80',
+      badge: 'bg-gray-800/40 text-gray-300 border border-gray-700/40',
       glow: '',
-      dot: 'bg-red-500',
-      bar: 'bg-red-500/80',
+      dot: 'bg-gray-400',
+      bar: 'bg-gray-400/80',
       icon: <FireIcon className="w-4 h-4" />,
       label: 'CRITICAL',
     },
     high: {
-      border: 'border-l-amber-500/80',
-      badge: 'bg-amber-950/40 text-amber-400 border border-amber-800/40',
+      border: 'border-l-gray-500/80',
+      badge: 'bg-gray-800/40 text-gray-400 border border-gray-700/40',
       glow: '',
-      dot: 'bg-amber-500',
-      bar: 'bg-amber-500/80',
+      dot: 'bg-gray-500',
+      bar: 'bg-gray-500/80',
       icon: <ExclamationTriangleIcon className="w-4 h-4" />,
       label: 'HIGH',
     },
     medium: {
-      border: 'border-l-yellow-500/80',
-      badge: 'bg-yellow-950/40 text-yellow-400 border border-yellow-800/40',
+      border: 'border-l-gray-600/80',
+      badge: 'bg-gray-800/40 text-gray-400 border border-gray-700/40',
       glow: '',
-      dot: 'bg-yellow-500',
-      bar: 'bg-yellow-500/80',
+      dot: 'bg-gray-600',
+      bar: 'bg-gray-600/80',
       icon: <ShieldExclamationIcon className="w-4 h-4" />,
       label: 'MEDIUM',
     },
     low: {
-      border: 'border-l-blue-500/80',
-      badge: 'bg-blue-950/40 text-blue-400 border border-blue-800/40',
+      border: 'border-l-gray-700/80',
+      badge: 'bg-gray-800/40 text-gray-500 border border-gray-700/40',
       glow: '',
-      dot: 'bg-blue-500',
-      bar: 'bg-blue-500/80',
+      dot: 'bg-gray-700',
+      bar: 'bg-gray-700/80',
       icon: <InformationCircleIcon className="w-4 h-4" />,
       label: 'LOW',
     },
   };
 
   const STATUS_STYLES = {
-    active: 'bg-red-950/30 text-red-400 border border-red-900/40',
-    investigating: 'bg-blue-950/30 text-blue-400 border border-blue-900/40',
-    acknowledged: 'bg-amber-950/30 text-amber-400 border border-amber-900/40',
-    resolved: 'bg-emerald-950/30 text-emerald-400 border border-emerald-900/40',
+    active: 'bg-gray-800/30 text-gray-300 border border-gray-700/40',
+    investigating: 'bg-gray-800/30 text-gray-400 border border-gray-700/40',
+    acknowledged: 'bg-gray-800/30 text-gray-400 border border-gray-700/40',
+    resolved: 'bg-gray-800/30 text-gray-500 border border-gray-700/40',
   };
 
   const STATUS_ICONS = {
-    active: <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5" />,
-    investigating: <EyeIcon className="w-3 h-3 mr-1 text-blue-400" />,
-    acknowledged: <ClockIcon className="w-3 h-3 mr-1 text-amber-400" />,
-    resolved: <CheckCircleIcon className="w-3 h-3 mr-1 text-emerald-400" />,
+    active: <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-300 mr-1.5" />,
+    investigating: <EyeIcon className="w-3 h-3 mr-1 text-gray-400" />,
+    acknowledged: <ClockIcon className="w-3 h-3 mr-1 text-gray-400" />,
+    resolved: <CheckCircleIcon className="w-3 h-3 mr-1 text-gray-500" />,
   };
 
   const sev = (s) => SEVERITY_STYLES[s] || SEVERITY_STYLES.low;
@@ -300,11 +300,11 @@ const Alerts = () => {
       {/* ── Top Stats Bar ──────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { label: 'Active', value: stats.active, color: 'text-red-400', bg: 'bg-[#180d0d]/70 border-red-900/30' },
-          { label: 'Critical', value: stats.critical, color: 'text-red-400', bg: 'bg-[#180d0d]/70 border-red-900/30' },
-          { label: 'High Risk', value: stats.high, color: 'text-amber-400', bg: 'bg-[#18130a]/70 border-amber-900/30' },
-          { label: 'Investigating', value: stats.investigating, color: 'text-blue-400', bg: 'bg-[#0c141d]/70 border-blue-900/30' },
-          { label: 'Resolved', value: stats.resolved, color: 'text-emerald-400', bg: 'bg-[#0c1813]/70 border-emerald-900/30' },
+          { label: 'Active', value: stats.active, color: 'text-gray-300', bg: 'bg-[#181818]/70 border-gray-800/30' },
+          { label: 'Critical', value: stats.critical, color: 'text-gray-300', bg: 'bg-[#181818]/70 border-gray-800/30' },
+          { label: 'High Risk', value: stats.high, color: 'text-gray-400', bg: 'bg-[#151515]/70 border-gray-800/30' },
+          { label: 'Investigating', value: stats.investigating, color: 'text-gray-400', bg: 'bg-[#121212]/70 border-gray-800/30' },
+          { label: 'Resolved', value: stats.resolved, color: 'text-gray-500', bg: 'bg-[#0d0d0d]/70 border-gray-800/30' },
           { label: 'Total Alerts', value: stats.total, color: 'text-gray-300', bg: 'bg-[#0d0d0d] border-[#1e1e1e]' },
         ].map(({ label, value, color, bg }) => (
           <div key={label} className={`border rounded-xl px-4 py-3 flex flex-col gap-1 ${bg}`}>
@@ -596,13 +596,13 @@ const Alerts = () => {
                     <div className="flex gap-2 mt-3 pt-3 border-t border-[#1a1a1a]">
                       <button
                         onClick={(e) => { e.stopPropagation(); acknowledgeAlert(alert.id); }}
-                        className="flex-1 py-1.5 text-xs font-medium bg-amber-950/30 text-amber-400 border border-amber-900/40 rounded-lg hover:bg-amber-900/30 transition-colors"
+                        className="flex-1 py-1.5 text-xs font-medium bg-white/5 text-gray-400 border border-white/10 rounded-lg hover:text-white hover:border-white/20 transition-colors"
                       >
                         Acknowledge
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); resolveAlert(alert.id); }}
-                        className="flex-1 py-1.5 text-xs font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-lg hover:bg-emerald-900/30 transition-colors"
+                        className="flex-1 py-1.5 text-xs font-medium bg-white/5 text-gray-400 border border-white/10 rounded-lg hover:text-white hover:border-white/20 transition-colors"
                       >
                         Mark Resolved
                       </button>
@@ -739,13 +739,13 @@ const Alerts = () => {
                     <>
                       <button
                         onClick={() => acknowledgeAlert(selectedAlert.id)}
-                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-amber-950/30 text-amber-400 border border-amber-900/40 rounded-xl hover:bg-amber-900/30 transition-colors"
+                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:text-white hover:border-white/20 transition-colors"
                       >
                         Acknowledge
                       </button>
                       <button
                         onClick={() => resolveAlert(selectedAlert.id)}
-                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-xl hover:bg-emerald-900/30 transition-colors"
+                        className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:text-white hover:border-white/20 transition-colors"
                       >
                         Mark Resolved
                       </button>
@@ -754,7 +754,7 @@ const Alerts = () => {
                   {selectedAlert.status === 'acknowledged' && (
                     <button
                       onClick={() => resolveAlert(selectedAlert.id)}
-                      className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-emerald-950/30 text-emerald-400 border border-emerald-900/40 rounded-xl hover:bg-emerald-900/30 transition-colors"
+                      className="flex-1 min-w-[140px] py-2.5 text-sm font-medium bg-white/5 text-gray-400 border border-white/10 rounded-xl hover:text-white hover:border-white/20 transition-colors"
                     >
                       Mark Resolved
                     </button>

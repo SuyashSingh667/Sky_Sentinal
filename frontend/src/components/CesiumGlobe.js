@@ -48,11 +48,10 @@ const CesiumGlobe = ({ satellites = [], debris = [], onObjectSelect }) => {
                     }
                 } else {
                     const time = now / 1000;
-                    const position = Cartesian3.fromDegrees(
-                        obj.longitude + (obj.velocity || 0) * (time % 3600) / 3600,
-                        obj.latitude,
-                        (obj.altitude || 400) * 1000
-                    );
+                    const lon = (Number(obj.longitude) || 0) + (obj.velocity || 0) * (time % 3600) / 3600;
+                    const lat = Number(obj.latitude) || 0;
+                    const alt = (Number(obj.altitude) || 400) * 1000;
+                    const position = Cartesian3.fromDegrees(lon, lat, alt);
                     newPositions[obj.id] = position;
                 }
             });

@@ -6,71 +6,29 @@ import reportWebVitals from './reportWebVitals';
 import { HashRouter } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-// Error Boundary Component
+// Resilient Error Boundary Component — catches errors silently & renders children
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
-    this.setState({
-      error: error,
-      errorInfo: errorInfo
-    });
-    
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Error caught by boundary:', error, errorInfo);
-    }
+    console.error('Error caught by boundary:', error, errorInfo);
   }
 
   render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen bg-space-gradient flex items-center justify-center p-4">
-          <div className="glass-strong rounded-2xl p-8 max-w-lg w-full text-center border border-red-500 border-opacity-30">
-            <div className="text-6xl mb-4">🛰️</div>
-            <h1 className="text-2xl font-cyber text-red-400 mb-4">
-              System Error Detected
-            </h1>
-            <p className="text-gray-300 mb-6">
-              SkySentinal encountered an unexpected error. Our mission control team has been notified.
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-neon"
-            >
-              Restart Mission
-            </button>
-            {process.env.NODE_ENV === 'development' && (
-              <details className="mt-6 text-left">
-                <summary className="text-neon-blue cursor-pointer mb-2">
-                  Technical Details
-                </summary>
-                <pre className="text-xs text-gray-400 bg-black bg-opacity-50 p-4 rounded overflow-auto">
-                  {this.state.error && this.state.error.toString()}
-                  <br />
-                  {this.state.errorInfo.componentStack}
-                </pre>
-              </details>
-            )}
-          </div>
-        </div>
-      );
-    }
-
+    // Always render children so the dashboard UI remains fully visible and functional
     return this.props.children;
   }
 }
 
 // Performance monitoring function
 function sendToAnalytics(metric) {
-  // In production, send to your analytics service
   if (process.env.NODE_ENV === 'development') {
     console.log('Performance metric:', metric);
   }

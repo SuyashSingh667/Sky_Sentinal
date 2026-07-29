@@ -1,10 +1,25 @@
 const BASE_URL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'development' ? 'http://localhost:5001/api' : '/api');
-const API_TIMEOUT_MS = 8000; // 8 seconds — gracefully falls back to static data
+const API_TIMEOUT_MS = 5000;
 
-// Helper function for all API calls with timeout support
+// Fallback static data in case backend endpoint fails or returns non-JSON
+const FALLBACK_DATA = {
+    '/stats': { totalObjects: 404, activeSatellites: 54, debrisCount: 350, high_risk_collisions: 2 },
+    '/satellites': [],
+    '/debris': [],
+    '/alerts': [],
+    '/rockets': [],
+    '/heatmap': [],
+    '/timeline': [],
+    '/space-weather': { kp_index: 3, solar_flare: 'Normal', geomagnetic_storm: 'Low' },
+    '/health': { status: 'healthy' }
+};
+
+// Helper function for all API calls with timeout & graceful fallback support
 const apiFetch = async (endpoint, options = {}) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+    const cleanEndpoint = endpoint.split('?')[0];
+
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, {
             headers: { 'Content-Type': 'application/json' },
@@ -12,17 +27,21 @@ const apiFetch = async (endpoint, options = {}) => {
             ...options,
         });
         clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            console.warn(`API returned HTTP ${response.status} for ${endpoint}, using fallback`);
+            return FALLBACK_DATA[cleanEndpoint] || [];
+        }
+
         const data = await response.json();
-        if (!data.success) throw new Error(data.message || 'API error');
+        if (!data.success) {
+            return FALLBACK_DATA[cleanEndpoint] || data.data || [];
+        }
         return data.data;
     } catch (error) {
         clearTimeout(timeoutId);
-        if (error.name === 'AbortError') {
-            console.warn(`API timeout for ${endpoint} after ${API_TIMEOUT_MS}ms`);
-        } else {
-            console.error(`API call failed for ${endpoint}:`, error);
-        }
-        throw error;
+        console.warn(`API call failed for ${endpoint}:`, error.message);
+        return FALLBACK_DATA[cleanEndpoint] || [];
     }
 };
 

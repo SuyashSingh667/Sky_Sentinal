@@ -1,9 +1,12 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
-import os
 import threading
 from datetime import datetime, timedelta
 import requests
@@ -60,15 +63,20 @@ def scheduled_tle_refresh():
         with _refresh_lock:
             _refresh_in_progress = False
 
-scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(
-    scheduled_tle_refresh,
-    trigger='interval',
-    hours=6,
-    id='tle_refresh',
-    next_run_time=None,   # Don't fire immediately — let the cache warm naturally
-)
-scheduler.start()
+scheduler = None
+try:
+    scheduler = BackgroundScheduler(daemon=True)
+    scheduler.add_job(
+        scheduled_tle_refresh,
+        trigger='interval',
+        hours=6,
+        id='tle_refresh',
+        next_run_time=None,
+    )
+    if not os.environ.get('VERCEL'):
+        scheduler.start()
+except Exception as e:
+    print(f"[Scheduler] Start skipped: {e}")
 
 # =============================================================================
 # AUTH ROUTES
@@ -280,9 +288,7 @@ def get_tle_status():
       sources               - list of CelesTrak group names
     """
     try:
-        cache_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), 'data', 'cache.json'
-        )
+        cache_path = data_fetcher.cache_file
         last_updated_str = None
         age_minutes      = None
         is_stale         = True
@@ -301,7 +307,7 @@ def get_tle_status():
             debris_count    = len(cache.get('debris', []))
 
         # Next scheduled run from APScheduler
-        job          = scheduler.get_job('tle_refresh')
+        job          = scheduler.get_job('tle_refresh') if (scheduler and hasattr(scheduler, 'get_job')) else None
         next_run_str = job.next_run_time.isoformat() if (job and job.next_run_time) else None
 
         return jsonify({
@@ -377,7 +383,10 @@ def get_space_weather():
         kp_res = requests.get('https://services.swpc.noaa.gov/products/summary/planetary-k-index.json', timeout=2)
         if kp_res.status_code == 200:
             kp_data = kp_res.json()
-            kp = float(kp_data.get('estimated_kp', 4.3))
+            if isinstance(kp_data, list) and len(kp_data) > 0:
+                kp_data = kp_data[0]
+            if isinstance(kp_data, dict):
+                kp = float(kp_data.get('estimated_kp', 4.3))
     except Exception as e:
         print(f"[NOAA API] Kp index fetch failed: {e}")
 
@@ -386,7 +395,10 @@ def get_space_weather():
         flux_res = requests.get('https://services.swpc.noaa.gov/products/summary/10cm-flux.json', timeout=2)
         if flux_res.status_code == 200:
             flux_data = flux_res.json()
-            flux_sfu = f"{flux_data.get('flux', 145.2)} sfu"
+            if isinstance(flux_data, list) and len(flux_data) > 0:
+                flux_data = flux_data[0]
+            if isinstance(flux_data, dict):
+                flux_sfu = f"{flux_data.get('flux', 145.2)} sfu"
     except Exception as e:
         print(f"[NOAA API] 10cm-flux fetch failed: {e}")
 

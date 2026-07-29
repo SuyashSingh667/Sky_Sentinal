@@ -11,11 +11,23 @@ from typing import List, Dict, Optional, Tuple
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tle_parser import TLEParser
 
+import tempfile
+
 class DataFetcher:
     """Service for fetching and managing space debris data from CelesTrak"""
 
     def __init__(self):
-        self.cache_file = 'data/cache.json'
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.cache_file = os.path.join(base_dir, 'data', 'cache.json')
+        try:
+            os.makedirs(os.path.dirname(self.cache_file), exist_ok=True)
+            test_path = os.path.join(os.path.dirname(self.cache_file), '.write_test')
+            with open(test_path, 'w') as f:
+                f.write('ok')
+            os.remove(test_path)
+        except (PermissionError, OSError):
+            self.cache_file = os.path.join(tempfile.gettempdir(), 'skysentinal_cache.json')
+
         self.cache_duration = timedelta(hours=6)
         self.tle_parser = TLEParser()
 
@@ -156,7 +168,7 @@ class DataFetcher:
 
     def initialize_sample_data(self):
         """Fallback: write an empty cache so app.py doesn't crash on first run."""
-        os.makedirs('data', exist_ok=True)
+        os.makedirs(os.path.dirname(self.cache_file), exist_ok=True)
         empty = {
             'satellites':   [],
             'debris':       [],
@@ -183,9 +195,18 @@ class DataFetcher:
                 if datetime.utcnow() - last_updated < self.cache_duration:
                     print("✅ Serving from cache")
                     return data
+
+                # Cache is stale but exists — return it immediately and refresh in background
+                if data.get('satellites') or data.get('debris'):
+                    print("⏳ Cache stale — serving stale data instantly, refreshing in background...")
+                    import threading
+                    t = threading.Thread(target=self._fetch_and_cache, daemon=True)
+                    t.start()
+                    return data
             except Exception as e:
                 print(f"⚠️  Cache read error: {e}")
 
+        # No usable cache at all — must fetch synchronously
         return self._fetch_and_cache()
 
     def _fetch_and_cache(self) -> Dict:
@@ -221,7 +242,7 @@ class DataFetcher:
             'last_updated': datetime.utcnow().isoformat(),
         }
 
-        os.makedirs('data', exist_ok=True)
+        os.makedirs(os.path.dirname(self.cache_file), exist_ok=True)
         with open(self.cache_file, 'w') as f:
             json.dump(data, f, indent=2)
 

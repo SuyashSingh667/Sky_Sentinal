@@ -10,7 +10,7 @@ import { Toaster } from 'react-hot-toast';
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -19,10 +19,19 @@ class ErrorBoundary extends React.Component {
 
   componentDidCatch(error, errorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    this.setState({ errorInfo });
   }
 
   render() {
-    // Always render children so the dashboard UI remains fully visible and functional
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', color: 'red', background: 'black', height: '100vh', width: '100vw', overflow: 'auto' }}>
+          <h2>Dashboard Crashed</h2>
+          <pre>{this.state.error?.toString()}</pre>
+          <pre>{this.state.errorInfo?.componentStack}</pre>
+        </div>
+      );
+    }
     return this.props.children;
   }
 }

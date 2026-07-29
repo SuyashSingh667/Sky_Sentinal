@@ -6,12 +6,23 @@ from typing import Dict, List, Optional
 import io
 import base64
 
+import tempfile
+
 class ReportGenerator:
     """Service for generating mission reports and data exports"""
     
     def __init__(self):
-        self.reports_dir = 'data/reports'
-        os.makedirs(self.reports_dir, exist_ok=True)
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.reports_dir = os.path.join(base_dir, 'data', 'reports')
+        try:
+            os.makedirs(self.reports_dir, exist_ok=True)
+            test_path = os.path.join(self.reports_dir, '.write_test')
+            with open(test_path, 'w') as f:
+                f.write('ok')
+            os.remove(test_path)
+        except (PermissionError, OSError):
+            self.reports_dir = os.path.join(tempfile.gettempdir(), 'skysentinal_reports')
+            os.makedirs(self.reports_dir, exist_ok=True)
     
     def generate_report(self, report_type: str, parameters: Dict) -> str:
         """Generate report based on type and parameters"""
